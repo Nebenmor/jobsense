@@ -5,3 +5,5 @@ pydantic-settings
 pdfplumber
 groq
 python-multipart
+sentence-transformers
+numpy
