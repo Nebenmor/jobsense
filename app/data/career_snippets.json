@@ -1,0 +1,127 @@
+[
+  {
+    "id": 1,
+    "category": "quantification",
+    "text": "Quantify achievements with specific metrics wherever possible. Instead of 'improved application performance', write 'reduced API response time by 40% through query optimization'. Numbers make impact concrete and credible to hiring managers."
+  },
+  {
+    "id": 2,
+    "category": "keywords",
+    "text": "Mirror keywords from the job description naturally in your CV. Many companies use Applicant Tracking Systems (ATS) that filter CVs before a human sees them. If the JD says 'CI/CD pipelines', use that exact phrase rather than 'deployment automation'."
+  },
+  {
+    "id": 3,
+    "category": "technical_roles",
+    "text": "For technical roles, list specific tools, frameworks, and languages by name rather than vague categories. 'Proficient in React, FastAPI, and PostgreSQL' is far stronger than 'experienced with modern web technologies'."
+  },
+  {
+    "id": 4,
+    "category": "leadership",
+    "text": "For leadership and management roles, emphasize team size managed, hiring decisions made, and measurable team outcomes — not just a list of responsibilities. 'Led a team of 6 engineers to deliver a payment integration 2 weeks ahead of schedule' beats 'managed engineering team'."
+  },
+  {
+    "id": 5,
+    "category": "objective_statement",
+    "text": "Remove generic objective statements like 'seeking a challenging role in a dynamic company'. They add no signal and waste prime CV real estate. Replace with a 2-3 line professional summary that names your specialization and top 2 achievements."
+  },
+  {
+    "id": 6,
+    "category": "startups",
+    "text": "For startup roles, emphasize versatility, ownership, and speed. Highlight instances where you wore multiple hats, shipped fast under constraints, or built something from scratch. Startups value self-starters over specialists."
+  },
+  {
+    "id": 7,
+    "category": "enterprise",
+    "text": "For enterprise and large company roles, emphasize process, scale, and cross-team collaboration. Show experience working within structured environments, following engineering standards, and influencing across departments."
+  },
+  {
+    "id": 8,
+    "category": "client_facing",
+    "text": "For client-facing or customer success roles, highlight communication, stakeholder management, and conflict resolution skills with concrete examples. Technical output matters less than demonstrated ability to manage relationships and expectations."
+  },
+  {
+    "id": 9,
+    "category": "cloud",
+    "text": "For roles requiring cloud experience, be specific about which services you have used — not just the platform. 'Deployed containerized services on AWS using ECS, RDS, and CloudWatch' is stronger than 'AWS experience'. Certifications like AWS SAA or GCP ACE are worth listing even if in progress."
+  },
+  {
+    "id": 10,
+    "category": "projects",
+    "text": "Include personal or open-source projects that demonstrate skills the role requires, especially if your work history has gaps. For each project, state the problem it solved, the tech stack used, and a measurable outcome or usage metric."
+  },
+  {
+    "id": 11,
+    "category": "relevance",
+    "text": "Remove or condense experience older than 10 years unless it is directly relevant to the role. Recruiters focus on recent work. One line per outdated role is enough — full bullet points dilute the impact of your current experience."
+  },
+  {
+    "id": 12,
+    "category": "action_verbs",
+    "text": "Start every bullet point with a strong action verb: built, designed, reduced, increased, led, shipped, automated, migrated, integrated. Avoid passive phrasing like 'was responsible for' or 'worked on' — they weaken the impression of ownership."
+  },
+  {
+    "id": 13,
+    "category": "backend",
+    "text": "For backend engineering roles, highlight experience with system design decisions, database optimization, API design, and handling scale or reliability challenges. Mention specific throughput numbers or uptime metrics if available."
+  },
+  {
+    "id": 14,
+    "category": "frontend",
+    "text": "For frontend roles, go beyond listing frameworks — demonstrate understanding of performance, accessibility, and user experience. Mention Core Web Vitals improvements, bundle size reductions, or accessibility compliance work if applicable."
+  },
+  {
+    "id": 15,
+    "category": "fullstack",
+    "text": "For full stack roles, show genuine depth on both ends rather than surface familiarity with everything. Pick one or two features you owned end-to-end and describe the full journey from database schema through API design to UI implementation."
+  },
+  {
+    "id": 16,
+    "category": "devops",
+    "text": "For DevOps and platform roles, emphasize reliability engineering, automation, and incident response experience. Mention specific tools: Terraform, Kubernetes, GitHub Actions, Datadog. Quantify improvements in deployment frequency or incident resolution time."
+  },
+  {
+    "id": 17,
+    "category": "data",
+    "text": "For data engineering or analytics roles, highlight experience with data pipeline design, data quality, and query optimization. Name specific tools: dbt, Airflow, Spark, BigQuery. Business impact of data work (decisions enabled, cost saved) strengthens the case."
+  },
+  {
+    "id": 18,
+    "category": "testing",
+    "text": "Mention testing practices explicitly for engineering roles — it signals professionalism. Specify test types (unit, integration, e2e), frameworks used (pytest, Jest, Cypress), and coverage levels achieved. Many CVs omit this entirely, making it a differentiator."
+  },
+  {
+    "id": 19,
+    "category": "gaps",
+    "text": "Address employment gaps proactively if they exceed 6 months. A brief note on freelance work, open-source contributions, courses completed, or caregiving responsibilities is better than silence. Unexplained gaps raise unnecessary questions."
+  },
+  {
+    "id": 20,
+    "category": "education",
+    "text": "For candidates with strong work experience, education should sit below work history and take up minimal space. List degree, institution, and year only. For recent graduates with limited experience, move education up and include relevant coursework or final year projects."
+  },
+  {
+    "id": 21,
+    "category": "security",
+    "text": "For security-focused roles, highlight specific vulnerability types addressed, compliance frameworks followed (SOC2, ISO 27001, OWASP), and any security audits or penetration tests you have participated in. Security experience is highly specific — vague claims are ignored."
+  },
+  {
+    "id": 22,
+    "category": "mobile",
+    "text": "For mobile development roles, specify platform focus (iOS, Android, cross-platform), frameworks used (Swift, Kotlin, React Native, Flutter), and app store experience including release management and crash rate improvements if available."
+  },
+  {
+    "id": 23,
+    "category": "collaboration",
+    "text": "Demonstrate collaboration skills through concrete examples rather than claiming them. 'Collaborated with the design team to reduce user onboarding drop-off by 30%' is evidence; 'strong team player' is just a claim."
+  },
+  {
+    "id": 24,
+    "category": "cover_letter",
+    "text": "Tailor the opening paragraph of your cover letter to the specific company and role — mention a product, challenge, or mission that genuinely interests you. Generic openers signal mass applications and reduce your chance of standing out."
+  },
+  {
+    "id": 25,
+    "category": "formatting",
+    "text": "Keep CV formatting clean and ATS-friendly: single column, standard fonts, no tables or text boxes, no headers or footers with key information. Complex layouts often break ATS parsers and cause your CV to be rejected before a human sees it."
+  }
+]
