@@ -9,6 +9,7 @@ class Settings(BaseSettings):
     or from real environment variables in production.
     """
     groq_api_key: str
+    database_url: str
     max_cv_size_mb: int = 5
     groq_model: str = "llama-3.3-70b-versatile"
 
