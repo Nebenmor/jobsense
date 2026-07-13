@@ -7,3 +7,5 @@ groq
 python-multipart
 sentence-transformers
 numpy
+sqlalchemy[asyncio]
+asyncpg
