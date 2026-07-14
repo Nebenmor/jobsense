@@ -1,7 +1,0 @@
-fastapi
-uvicorn[standard]
-pydantic
-pydantic-settings
-pdfplumber
-groq
-python-multipart
