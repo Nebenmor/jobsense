@@ -1,47 +1,66 @@
 # File: app/services/retrieval_service.py
 import json
-import numpy as np
 from pathlib import Path
-
-from app.services.embedding_service import embed_text
 
 _data_dir = Path(__file__).parent.parent / "data"
 
-# Load snippets
 with open(_data_dir / "career_snippets.json", "r") as f:
     _snippets: list[dict] = json.load(f)
 
 _snippet_texts: list[str] = [s["text"] for s in _snippets]
 
-# Load pre-computed embeddings from file — no model needed at runtime
-with open(_data_dir / "snippet_embeddings.json", "r") as f:
-    _snippet_embeddings: np.ndarray = np.array(json.load(f))
-
-
-def _cosine_similarity(vec_a: np.ndarray, vec_b: np.ndarray) -> float:
-    dot_product = np.dot(vec_a, vec_b)
-    magnitude = np.linalg.norm(vec_a) * np.linalg.norm(vec_b)
-    if magnitude == 0:
-        return 0.0
-    return float(dot_product / magnitude)
-
 
 def retrieve_relevant_snippets(job_description: str, top_k: int = 4) -> list[str]:
     """
-    Embeds the job description query and retrieves top_k most relevant
-    career-advice snippets using cosine similarity.
+    Returns the top_k most relevant career-advice snippets for a given
+    job description using keyword-based scoring.
 
-    Snippet embeddings are pre-computed and loaded from file —
-    the embedding model is only used at query time (for the JD),
-    not for the static knowledge base. This keeps memory usage low
-    enough to run on Render's free tier.
+    This replaces the sentence-transformers cosine similarity approach
+    to avoid loading a 400MB model on the server — which exceeds
+    Render's free tier 512MB RAM limit.
+
+    The keyword approach works well for this use case because job descriptions
+    contain specific, distinctive terms (e.g. 'AWS', 'backend', 'leadership')
+    that map directly to the categories in our snippet knowledge base.
     """
-    query_vector = embed_text(job_description)
+    jd_lower = job_description.lower()
+    scored = []
 
-    scored = [
-        (idx, _cosine_similarity(query_vector, snippet_vec))
-        for idx, snippet_vec in enumerate(_snippet_embeddings)
-    ]
+    for idx, snippet in enumerate(_snippets):
+        score = 0
+        snippet_lower = snippet["text"].lower()
+
+        # Score based on category keyword match
+        category = snippet.get("category", "")
+        category_keywords = {
+            "backend": ["backend", "api", "server", "fastapi", "django", "flask", "node", "python"],
+            "frontend": ["frontend", "react", "vue", "angular", "ui", "css", "html", "javascript"],
+            "fullstack": ["full stack", "fullstack", "full-stack", "end-to-end"],
+            "cloud": ["aws", "azure", "gcp", "cloud", "kubernetes", "docker", "devops"],
+            "leadership": ["lead", "manager", "management", "team lead", "director", "head of"],
+            "data": ["data", "analytics", "sql", "database", "pipeline", "etl", "spark"],
+            "mobile": ["mobile", "ios", "android", "react native", "flutter", "swift", "kotlin"],
+            "security": ["security", "penetration", "vulnerability", "compliance", "soc2", "owasp"],
+            "testing": ["test", "qa", "quality", "jest", "pytest", "cypress", "automation"],
+            "quantification": ["metrics", "impact", "results", "achievements", "performance"],
+            "keywords": ["ats", "keywords", "applicant tracking", "resume", "cv"],
+            "startups": ["startup", "scale", "growth", "founding", "early stage"],
+            "enterprise": ["enterprise", "corporate", "large company", "fortune", "cross-team"],
+            "devops": ["devops", "ci/cd", "pipeline", "deployment", "infrastructure", "terraform"],
+        }
+
+        if category in category_keywords:
+            for kw in category_keywords[category]:
+                if kw in jd_lower:
+                    score += 3  # strong signal — category directly matches JD
+
+        # Additional score for word overlap between snippet and JD
+        snippet_words = set(snippet_lower.split())
+        jd_words = set(jd_lower.split())
+        overlap = len(snippet_words & jd_words)
+        score += overlap
+
+        scored.append((idx, score))
 
     top_results = sorted(scored, key=lambda x: x[1], reverse=True)[:top_k]
     return [_snippet_texts[idx] for idx, _ in top_results]
