@@ -1,5 +1,5 @@
 // File: src/components/ScoreRing.tsx
-// The signature element — animated SVG arc progress ring around the match score.
+// This is the signature element — animated SVG arc progress ring around the match score.
 
 interface Props {
   score: number;
