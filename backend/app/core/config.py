@@ -4,7 +4,7 @@ from pydantic_settings import BaseSettings
 
 class Settings(BaseSettings):
     """
-    Centralized app configuration.
+    This is the centralized app configuration.
     Values are loaded from a .env file (never committed to git)
     or from real environment variables in production.
     """
