@@ -2,28 +2,30 @@
 from sentence_transformers import SentenceTransformer
 import numpy as np
 
-# Load the model once when the module is imported.
-# "all-MiniLM-L6-v2" is small (80MB), fast, and accurate enough for this use case.
-# It downloads automatically on first run and is cached locally after that.
-_model = SentenceTransformer("all-MiniLM-L6-v2")
+# Lazy loading — model loads only on first call, not at import time.
+# This avoids loading the model during startup health checks,
+# and means cold starts are faster even if the model is needed.
+_model = None
+
+
+def _get_model() -> SentenceTransformer:
+    global _model
+    if _model is None:
+        _model = SentenceTransformer("all-MiniLM-L6-v2")
+    return _model
 
 
 def embed_text(text: str) -> np.ndarray:
     """
-    Converts a string into a vector (1D numpy array of floats).
-    The vector captures the semantic meaning of the text.
-
-    Example: embed_text("Python backend developer") and
-    embed_text("FastAPI REST API engineer") will produce vectors
-    that are close together — similar meaning, different words.
+    Embeds a single string into a vector.
+    Used at query time to embed the incoming job description.
     """
-    return _model.encode(text, convert_to_numpy=True)
+    return _get_model().encode(text, convert_to_numpy=True)
 
 
 def embed_texts(texts: list[str]) -> np.ndarray:
     """
-    Embeds a list of strings in one batch — more efficient than
-    calling embed_text() in a loop. Returns a 2D array where
-    each row is the vector for the corresponding text.
+    Embeds a list of strings in one batch.
+    Used locally to pre-compute snippet embeddings — not called on the server.
     """
-    return _model.encode(texts, convert_to_numpy=True)
+    return _get_model().encode(texts, convert_to_numpy=True)
