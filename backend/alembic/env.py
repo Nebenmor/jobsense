@@ -1,5 +1,6 @@
 # File: alembic/env.py
 import asyncio
+import os
 from logging.config import fileConfig
 
 from sqlalchemy import pool
@@ -8,29 +9,33 @@ from sqlalchemy.ext.asyncio import async_engine_from_config
 
 from alembic import context
 
-# Import your Base and all models so Alembic can detect schema changes.
-# If you forget to import a model here, Alembic won't know it exists
-# and will not generate migrations for it.
 from app.core.database import Base
 from app.models.analysis import Analysis  # noqa: F401
 
-# Alembic config object — provides access to values in alembic.ini
 config = context.config
 
-# Set up Python logging from alembic.ini config
 if config.config_file_name is not None:
     fileConfig(config.config_file_name)
 
-# This is what Alembic compares against your DB to detect changes
 target_metadata = Base.metadata
 
 
+def get_url() -> str:
+    """
+    Read DATABASE_URL from environment and convert to asyncpg format.
+    This ensures Alembic uses the correct production URL on Render
+    rather than the placeholder in alembic.ini.
+    """
+    url = os.environ.get("DATABASE_URL", config.get_main_option("sqlalchemy.url"))
+    if url.startswith("postgres://"):
+        url = url.replace("postgres://", "postgresql+asyncpg://", 1)
+    elif url.startswith("postgresql://"):
+        url = url.replace("postgresql://", "postgresql+asyncpg://", 1)
+    return url
+
+
 def run_migrations_offline() -> None:
-    """
-    Run migrations without a live DB connection.
-    Useful for generating SQL scripts to review before applying.
-    """
-    url = config.get_main_option("sqlalchemy.url")
+    url = get_url()
     context.configure(
         url=url,
         target_metadata=target_metadata,
@@ -48,11 +53,10 @@ def do_run_migrations(connection: Connection) -> None:
 
 
 async def run_async_migrations() -> None:
-    """
-    Run migrations using an async engine — required because we use asyncpg.
-    """
+    configuration = config.get_section(config.config_ini_section, {})
+    configuration["sqlalchemy.url"] = get_url()
     connectable = async_engine_from_config(
-        config.get_section(config.config_ini_section, {}),
+        configuration,
         prefix="sqlalchemy.",
         poolclass=pool.NullPool,
     )
