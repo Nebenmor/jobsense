@@ -50,7 +50,7 @@ async def analyze(
 @router.get("/analyses", response_model=list[AnalysisSummary])
 async def list_analyses(db: AsyncSession = Depends(get_db)):
     """
-    Returns all non-expired analyses, most recent first.
+    This returns all non-expired analyses, most recent first.
     Filters out records past their expires_at date — soft expiry
     without needing a background cleanup job for now.
     """
