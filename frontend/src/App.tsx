@@ -1,3 +1,5 @@
+// File: src/App.tsx
+// Main application component that manages state and renders the upload form, past analyses, and results panel.
 import { useState } from "react";
 import axios from "axios";
 import type { AnalysisResult } from "./types/analysis";
