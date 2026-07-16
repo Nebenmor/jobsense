@@ -9,3 +9,4 @@ sentence-transformers
 numpy
 sqlalchemy[asyncio]
 asyncpg
+alembic
