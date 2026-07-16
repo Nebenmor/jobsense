@@ -17,7 +17,7 @@ class AnalysisResponse(BaseModel):
 
 class AnalysisSaved(AnalysisResponse):
     """
-    Extends AnalysisResponse with database fields.
+    This class extends AnalysisResponse with database fields.
     Returned when fetching saved analyses — includes id and timestamps.
     """
     id: str
