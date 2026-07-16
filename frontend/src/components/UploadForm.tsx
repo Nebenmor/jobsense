@@ -1,4 +1,5 @@
 import { useState, useRef } from "react";
+import axios from "axios";
 import type { AnalysisResult } from "../types/analysis";
 import apiClient from "../api/client";
 
@@ -34,8 +35,8 @@ export default function UploadForm({ onResult, onLoading, loading }: Props) {
       const response = await apiClient.post("/api/v1/analyze", formData);
       onResult(response.data);
     } catch (err: unknown) {
-      const detail = apiClient.isAxiosError?.(err)
-        ? (err as { response?: { data?: { detail?: string } } }).response?.data?.detail
+      const detail = axios.isAxiosError(err)
+        ? err.response?.data?.detail
         : null;
       setError(detail || "Something went wrong. Please try again.");
     } finally {
