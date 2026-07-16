@@ -10,7 +10,7 @@ from alembic import context
 
 # Import your Base and all models so Alembic can detect schema changes.
 # If you forget to import a model here, Alembic won't know it exists
-# and won't generate migrations for it.
+# and will not generate migrations for it.
 from app.core.database import Base
 from app.models.analysis import Analysis  # noqa: F401
 
