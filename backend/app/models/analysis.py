@@ -9,7 +9,7 @@ from app.core.database import Base
 
 class Analysis(Base):
     """
-    Represents one CV-to-job analysis result saved to the database.
+    This class represents one CV-to-job analysis result saved to the database.
 
     We store ONLY the analysis output — not the raw CV text or file.
     This is deliberate: data minimization means we never persist
