@@ -1,3 +1,4 @@
+// ResultsPanel component for displaying the analysis results, including match score, matching skills, gaps, and suggestions.
 import type { AnalysisResult } from "../types/analysis";
 import ScoreRing from "./ScoreRing";
 
