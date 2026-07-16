@@ -1,7 +1,6 @@
-// Upload form component for uploading CV and job description, and triggering analysis.
 import { useState, useRef } from "react";
-import axios from "axios";
 import type { AnalysisResult } from "../types/analysis";
+import apiClient from "../api/client";
 
 interface Props {
   onResult: (result: AnalysisResult) => void;
@@ -23,7 +22,6 @@ export default function UploadForm({ onResult, onLoading, loading }: Props) {
   const handleSubmit = async () => {
     setError("");
     const file = fileRef.current?.files?.[0];
-
     if (!file) return setError("Please upload your CV as a PDF.");
     if (!jobDescription.trim()) return setError("Please paste a job description.");
 
@@ -33,14 +31,12 @@ export default function UploadForm({ onResult, onLoading, loading }: Props) {
 
     try {
       onLoading(true);
-      const response = await axios.post(
-        "http://127.0.0.1:8000/api/v1/analyze",
-        formData
-      );
+      const response = await apiClient.post("/api/v1/analyze", formData);
       onResult(response.data);
     } catch (err: unknown) {
-      const detail =
-        axios.isAxiosError(err) ? err.response?.data?.detail : null;
+      const detail = apiClient.isAxiosError?.(err)
+        ? (err as { response?: { data?: { detail?: string } } }).response?.data?.detail
+        : null;
       setError(detail || "Something went wrong. Please try again.");
     } finally {
       onLoading(false);
@@ -65,9 +61,7 @@ export default function UploadForm({ onResult, onLoading, loading }: Props) {
             style={{ display: "none" }}
           />
           <span className="file-icon">📄</span>
-          <span className="file-text">
-            {fileName || "Click to upload PDF"}
-          </span>
+          <span className="file-text">{fileName || "Click to upload PDF"}</span>
           {fileName && <span className="file-name">{fileName}</span>}
         </div>
       </div>
@@ -85,11 +79,7 @@ export default function UploadForm({ onResult, onLoading, loading }: Props) {
 
       {error && <p className="error">{error}</p>}
 
-      <button
-        className="btn-analyze"
-        onClick={handleSubmit}
-        disabled={loading}
-      >
+      <button className="btn-analyze" onClick={handleSubmit} disabled={loading}>
         {loading ? (
           <span className="btn-loading">
             <span className="spinner" /> Analyzing...

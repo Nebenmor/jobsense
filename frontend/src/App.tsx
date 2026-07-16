@@ -1,8 +1,6 @@
-// File: src/App.tsx
-// Main application component that manages state and renders the upload form, past analyses, and results panel.
 import { useState } from "react";
-import axios from "axios";
 import type { AnalysisResult } from "./types/analysis";
+import apiClient from "./api/client";
 import UploadForm from "./components/UploadForm";
 import ResultsPanel from "./components/ResultsPanel";
 import PastAnalyses from "./components/PastAnalyses";
@@ -20,9 +18,7 @@ export default function App() {
 
   const handleSelectPast = async (id: string) => {
     try {
-      const res = await axios.get(
-        `http://127.0.0.1:8000/api/v1/analyses/${id}`
-      );
+      const res = await apiClient.get(`/api/v1/analyses/${id}`);
       setResult(res.data);
     } catch {
       // silently ignore — record may have expired

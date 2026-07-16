@@ -1,7 +1,6 @@
-// PastAnalyses component for displaying a list of past analyses and allowing selection of an analysis to view its details.
 import { useEffect, useState } from "react";
-import axios from "axios";
 import type { AnalysisSummary } from "../types/analysis";
+import apiClient from "../api/client";
 
 interface Props {
   onSelect: (id: string) => void;
@@ -12,8 +11,8 @@ export default function PastAnalyses({ onSelect, refreshTrigger }: Props) {
   const [analyses, setAnalyses] = useState<AnalysisSummary[]>([]);
 
   useEffect(() => {
-    axios
-      .get("http://127.0.0.1:8000/api/v1/analyses")
+    apiClient
+      .get("/api/v1/analyses")
       .then((res) => setAnalyses(res.data))
       .catch(() => {});
   }, [refreshTrigger]);
@@ -32,8 +31,7 @@ export default function PastAnalyses({ onSelect, refreshTrigger }: Props) {
               style={{
                 color:
                   a.match_score >= 75 ? "#6EE7B7" :
-                  a.match_score >= 50 ? "#FCD34D" :
-                  "#F87171",
+                  a.match_score >= 50 ? "#FCD34D" : "#F87171",
               }}
             >
               {a.match_score}%
