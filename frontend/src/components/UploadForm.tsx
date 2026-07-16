@@ -1,3 +1,4 @@
+// Upload form component for uploading CV and job description, and triggering analysis.
 import { useState, useRef } from "react";
 import axios from "axios";
 import type { AnalysisResult } from "../types/analysis";
