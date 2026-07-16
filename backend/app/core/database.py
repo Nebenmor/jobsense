@@ -4,7 +4,7 @@ from sqlalchemy.orm import DeclarativeBase
 
 from app.core.config import settings
 
-# The engine manages the connection pool to PostgreSQL.
+# The engine manages the connection pool to PostgreSQL database.
 # pool_pre_ping=True checks connections are alive before using them —
 # prevents errors from stale connections after idle periods.
 engine = create_async_engine(settings.database_url, pool_pre_ping=True)
