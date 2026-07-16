@@ -1,3 +1,4 @@
+// PastAnalyses component for displaying a list of past analyses and allowing selection of an analysis to view its details.
 import { useEffect, useState } from "react";
 import axios from "axios";
 import type { AnalysisSummary } from "../types/analysis";
