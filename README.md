@@ -362,7 +362,7 @@ FastAPI is an async framework. Using a synchronous database driver would block t
 
 ## Contributing
 
-Pull requests are welcome. For significant changes, open an issue first to discuss the proposed change.
+Pull requests are very welcome. For significant changes, open an issue first to discuss the proposed change.
 
 ---
 
