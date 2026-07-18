@@ -46,7 +46,7 @@ export default function App() {
               <div className="loader" />
               <p className="empty-text">Analyzing your CV...</p>
               <p className="empty-sub">
-                Retrieving relevant advice and running analysis
+                This may take up to 30 seconds on first load.
               </p>
             </div>
           ) : result ? (
