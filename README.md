@@ -83,7 +83,7 @@ The result: a backend engineering job description retrieves advice on tool speci
                                                                  │
                                                     ┌────────────▼───────────┐
                                                     │       PostgreSQL        │
-                                                    │    (Render managed)    │
+                                                    │   (Neon serverless)    │
                                                     └────────────────────────┘
 ```
 
@@ -99,10 +99,10 @@ The result: a backend engineering job description retrieves advice on tool speci
 | LLM | Groq API — Llama 3.3 70B | Structured JSON output with retry and parse guards |
 | PDF Parsing | pdfplumber | In-memory extraction, file discarded post-analysis |
 | RAG | Keyword-based retrieval | 25 categorised career-advice snippets |
-| Database | PostgreSQL + SQLAlchemy (async) | asyncpg driver, connection pooling |
+| Database | PostgreSQL (Neon) + SQLAlchemy (async) | asyncpg driver, serverless Postgres |
 | Migrations | Alembic | Auto-applied on deploy via build command |
 | Frontend Hosting | Vercel | Auto-deploy on push to main |
-| Backend Hosting | Render | Free tier web service + managed PostgreSQL |
+| Backend Hosting | Render | Free tier web service |
 
 ---
 
@@ -308,7 +308,7 @@ Set the following environment variables in the Render dashboard:
 | Variable | Value |
 |----------|-------|
 | `GROQ_API_KEY` | Your Groq API key |
-| `DATABASE_URL` | Render internal PostgreSQL connection string |
+| DATABASE_URL   | Neon connection string (direct, non-pooled) |
 
 **Build command:**
 ```
@@ -357,6 +357,9 @@ FastAPI is an async framework. Using a synchronous database driver would block t
 
 **Alembic over `create_all`**
 `Base.metadata.create_all` is convenient but provides no migration history, no rollback capability, and no safe path for schema changes in production. Alembic runs as part of the build command — the database schema is always in the state the codebase expects.
+
+**Neon over Render Postgres**
+Render's free PostgreSQL instances expire after 30 days. Neon's free tier does not expire; compute suspends when idle and wakes on the next query. The app handles this with `pool_pre_ping` and `pool_recycle`.
 
 ---
 
