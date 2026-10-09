@@ -1,6 +1,5 @@
 # File: alembic/env.py
 import asyncio
-import os
 from logging.config import fileConfig
 
 from sqlalchemy import pool
@@ -9,6 +8,7 @@ from sqlalchemy.ext.asyncio import async_engine_from_config
 
 from alembic import context
 
+from app.core.config import settings
 from app.core.database import Base
 from app.models.analysis import Analysis  # noqa: F401
 
@@ -20,22 +20,8 @@ if config.config_file_name is not None:
 target_metadata = Base.metadata
 
 
-def get_url() -> str:
-    """
-    Read DATABASE_URL from environment and convert to asyncpg format.
-    This ensures Alembic uses the correct production URL on Render
-    rather than the placeholder in alembic.ini.
-    """
-    url = os.environ.get("DATABASE_URL", config.get_main_option("sqlalchemy.url"))
-    if url.startswith("postgres://"):
-        url = url.replace("postgres://", "postgresql+asyncpg://", 1)
-    elif url.startswith("postgresql://"):
-        url = url.replace("postgresql://", "postgresql+asyncpg://", 1)
-    return url
-
-
 def run_migrations_offline() -> None:
-    url = get_url()
+    url = settings.async_database_url
     context.configure(
         url=url,
         target_metadata=target_metadata,
@@ -54,11 +40,12 @@ def do_run_migrations(connection: Connection) -> None:
 
 async def run_async_migrations() -> None:
     configuration = config.get_section(config.config_ini_section, {})
-    configuration["sqlalchemy.url"] = get_url()
+    configuration["sqlalchemy.url"] = settings.async_database_url
     connectable = async_engine_from_config(
         configuration,
         prefix="sqlalchemy.",
         poolclass=pool.NullPool,
+        connect_args=settings.db_connect_args,
     )
     async with connectable.connect() as connection:
         await connection.run_sync(do_run_migrations)
