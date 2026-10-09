@@ -1,14 +1,14 @@
 # File: app/services/groq_service.py
 import json
 import re
-from groq import Groq
+from groq import AsyncGroq
 from fastapi import HTTPException
 
 from app.core.config import settings
 from app.schemas.analysis import AnalysisResponse
 from app.services.retrieval_service import retrieve_relevant_snippets
 
-client = Groq(api_key=settings.groq_api_key)
+client = AsyncGroq(api_key=settings.groq_api_key)
 
 
 def _build_prompt(cv_text: str, job_description: str, snippets: list[str]) -> str:
@@ -98,7 +98,7 @@ async def analyze_cv_match(cv_text: str, job_description: str) -> AnalysisRespon
     # Call the LLM with the augmented prompt and parse the response.
     # This is the "G" in RAG — generation grounded in retrieved material.
     for attempt in range(2):
-        response = client.chat.completions.create(
+        response = await client.chat.completions.create(
             model=settings.groq_model,
             messages=[{"role": "user", "content": prompt}],
             temperature=0.3,
