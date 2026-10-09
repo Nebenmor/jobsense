@@ -1,19 +1,22 @@
 # File: app/services/groq_service.py
 import json
+import logging
 import re
-from groq import AsyncGroq
+from groq import AsyncGroq, APIError
 from fastapi import HTTPException
 
 from app.core.config import settings
 from app.schemas.analysis import AnalysisResponse
 from app.services.retrieval_service import retrieve_relevant_snippets
 
+logger = logging.getLogger(__name__)
+
 client = AsyncGroq(api_key=settings.groq_api_key)
 
 
 def _build_prompt(cv_text: str, job_description: str, snippets: list[str]) -> str:
     """
-    Constructs the full RAG-augmented prompt sent to Groq/Llama.
+    Constructs the full RAG-augmented prompt sent to Groq.
 
     Structure:
     1. Role instruction
@@ -69,7 +72,7 @@ Be specific and honest. Do not give generic advice.
 def _parse_response(raw_text: str) -> dict:
     """
     Strip markdown fences defensively before parsing.
-    Groq/Llama occasionally wraps output in ```json blocks even when told not to.
+    The model occasionally wraps output in ```json blocks even when told not to.
     """
     cleaned = re.sub(r"^```(json)?|```$", "", raw_text.strip(), flags=re.MULTILINE).strip()
     return json.loads(cleaned)
@@ -80,13 +83,15 @@ async def analyze_cv_match(cv_text: str, job_description: str) -> AnalysisRespon
     Full RAG pipeline:
     1. Retrieve — get top 4 relevant career-advice snippets for this JD
     2. Augment  — inject snippets into the prompt alongside CV + JD
-    3. Generate — call Groq/Llama, parse and validate structured JSON response
+    3. Generate — call Groq, parse and validate structured JSON response
 
     Retries once if the response isn't valid JSON.
+    Returns a clean 502 if the Groq API itself fails (bad model, rate limit, outage).
     """
     # ── Step 1: Retrieve ─────────────────────────────────────────────────────
-    # Embed the job description and fetch the 4 most relevant snippets.
-    # This is the "R" in RAG — retrieval happens before the LLM call.
+    # Score the job description against the career-advice snippets and fetch
+    # the 4 most relevant. This is the "R" in RAG — retrieval happens before
+    # the LLM call.
     snippets = retrieve_relevant_snippets(job_description, top_k=4)
 
     # ── Step 2: Augment ──────────────────────────────────────────────────────
@@ -98,12 +103,23 @@ async def analyze_cv_match(cv_text: str, job_description: str) -> AnalysisRespon
     # Call the LLM with the augmented prompt and parse the response.
     # This is the "G" in RAG — generation grounded in retrieved material.
     for attempt in range(2):
-        response = await client.chat.completions.create(
-            model=settings.groq_model,
-            messages=[{"role": "user", "content": prompt}],
-            temperature=0.3,
-        )
-        raw_text = response.choices[0].message.content
+        try:
+            response = await client.chat.completions.create(
+                model=settings.groq_model,
+                messages=[{"role": "user", "content": prompt}],
+                temperature=0.3,
+            )
+        except APIError as e:
+            # Handled here so the client gets a proper JSON error (with CORS
+            # headers) instead of an unhandled 500 that the browser reports
+            # as a CORS failure.
+            logger.error("Groq API error: %s", e)
+            raise HTTPException(
+                status_code=502,
+                detail="The AI service is currently unavailable. Please try again later."
+            ) from e
+
+        raw_text = response.choices[0].message.content or ""
 
         try:
             parsed = _parse_response(raw_text)
